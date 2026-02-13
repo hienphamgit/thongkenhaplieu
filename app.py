@@ -62,8 +62,6 @@ def hienthidulieu(df, title):
     df = format_data(df)
     # Sắp xếp theo tổng đã nhập từ cao đến thấp
     df_sorted = df.sort_values('Tổng đã nhập', ascending=False)
-
-
     
     # Chia layout 2 cột bằng nhau (1:1)
     col1, col2 = st.columns([1, 1])
@@ -88,6 +86,9 @@ def hienthidulieu(df, title):
     with col2:
         # 1. Đảm bảo sắp xếp đồng bộ với bảng
         df_plot = df_sorted.sort_values('Tổng đã nhập', ascending=False).reset_index(drop=True)
+        # Nếu df_plot lớn hơn 40 bản ghi thì chỉ vẽ 40 bản ghi đầu tiên
+        if len(df_plot) > 40:
+            df_plot = df_plot.head(40)
         plot_chart(df_plot, title)
 
 
