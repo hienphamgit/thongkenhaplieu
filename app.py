@@ -131,7 +131,7 @@ def main():
     st.header("1.2 Án điều tra truy tố")
     hienthidulieu(pd.DataFrame(data_andieutra), "Tình hình nhập liệu án điều tra truy tố theo tỉnh")
     
-    st.header("1.2 Án điều tra truy tố")
+    st.header("1.3 Án xét xử")
     hienthidulieu(pd.DataFrame(data_anxetxu), "Tình hình nhập liệu án xét xử theo tỉnh")
     
     st.header("2. Tình hình nhập theo khu vực")
@@ -141,7 +141,7 @@ def main():
     st.header("2.2 Án điều tra truy tố theo khu vực")
     hienthidulieu(pd.DataFrame(data_andieutrakv), "Tình hình nhập liệu án điều tra truy tố theo khu vực")
     
-    st.header("2.3 Án điều tra xét xử theo khu vực")
+    st.header("2.3 Án xét xử theo khu vực")
     hienthidulieu(pd.DataFrame(data_anxetxukv), "Tình hình nhập liệu án xét xử theo khu vực")
 
 if __name__ == "__main__":
