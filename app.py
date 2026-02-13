@@ -64,7 +64,7 @@ def hienthidulieu(df, title):
     df_sorted = df.sort_values('Tổng đã nhập', ascending=False)
     
     # Chia layout 2 cột bằng nhau (1:1)
-    col1, col2 = st.columns([1, 1])
+    col1, col2 = st.columns([1.1, 1])
 
     with col1:
         # Chuẩn bị dữ liệu bảng
@@ -76,7 +76,7 @@ def hienthidulieu(df, title):
         # Hiển thị bảng dạng dataframe để có thể tùy chỉnh chiều cao (height)
         # Giúp cột 1 cân đối hơn với biểu đồ ở cột 2
         st.dataframe(
-            df_table[['Tỉnh', 'Cần nhập', 'Mới nhập', 'Tổng đã nhập', 'Tỷ lệ']].style.format({
+            df_table[['Tỉnh', 'Số cần nhập', 'Số mới nhập', 'Tổng đã nhập', 'Tỷ lệ']].style.format({
                 'Tỷ lệ': '{:.1f}%'
             }),
             use_container_width=True,
