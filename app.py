@@ -67,20 +67,32 @@ def hienthidulieu(df, title):
     col1, col2 = st.columns([1, 1])
 
     with col1:
-        # Chuẩn bị dữ liệu bảng
+        # 1. Chuẩn bị dữ liệu bảng
         df_table = df_sorted.copy()
         df_table = df_table.sort_values('Tổng đã nhập', ascending=False).reset_index(drop=True)
         df_table.index = df_table.index + 1
-        df_table.index.name = 'STT' # Đặt tên cho cột index là STT
-        
-        # Hiển thị bảng dạng dataframe để có thể tùy chỉnh chiều cao (height)
-        # Giúp cột 1 cân đối hơn với biểu đồ ở cột 2
+        # Lưu ý: Với st.dataframe, index thường hiển thị riêng. 
+        # Nếu muốn cột STT đẹp hơn, bạn nên chuyển index thành một cột thực thụ:
+        df_table = df_table.reset_index().rename(columns={'index': 'STT'})
+
+        # 2. Hiển thị với cấu hình cột (column_config)
         st.dataframe(
-            df_table[['Tỉnh', 'Số cần nhập', 'Số mới nhập', 'Tổng đã nhập', 'Tỷ lệ hoàn thành']].style.format({
-                'Tỷ lệ hoàn thành': '{:.1f}%'
-            }),
+            df_table[['STT', 'Tỉnh', 'Số cần nhập', 'Số mới nhập', 'Tổng đã nhập', 'Tỷ lệ hoàn thành']],
             use_container_width=True,
-            height=500 # Điều chỉnh số này để khớp với chiều cao biểu đồ
+            height=500,
+            hide_index=True, # Ẩn index mặc định của pandas để dùng cột STT đã tạo
+            column_config={
+                "STT": st.column_config.Column(width="small"),
+                "Tỉnh": st.column_config.Column(width="medium"),
+                "Số cần nhập": st.column_config.Column("Số cần nhập", width="small"),
+                "Số mới nhập": st.column_config.Column("Số mới nhập", width="small"),
+                "Tổng đã nhập": st.column_config.Column("Tổng đã nhập", width="small"),
+                "Tỷ lệ hoàn thành": st.column_config.NumberColumn(
+                    "Tỷ lệ hoàn thành",
+                    format="%.1f%%", # Định dạng trực tiếp ở đây thay vì dùng .style.format
+                    width="small"
+                )
+            }
         )
 
     with col2:
