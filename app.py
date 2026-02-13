@@ -56,7 +56,7 @@ def format_data(df):
     #còn lại cần nhập 0 nếu đã nhập đủ hoặc vượt quá số cần nhập
     df['Còn lại cần nhập'] = df['Còn lại cần nhập'].apply(lambda x: 0 if x < 0 else x)
     # Tính toán tỷ lệ hoàn thành, nếu Số cần nhập = 0 thì tỷ lệ hoàn thành = 0 để tránh chia cho 0
-    df['Tỷ lệ hoàn thành'] = df.apply(lambda row: row['Tổng đã nhập'] / row['Số cần nhập'] * 100 if row['Số cần nhập'] > 0 else 0, axis=1)
+    df['Tỷ lệ'] = df.apply(lambda row: row['Tổng đã nhập'] / row['Số cần nhập'] * 100 if row['Số cần nhập'] > 0 else 0, axis=1)
     return df
 def hienthidulieu(df, title):
     df = format_data(df)
@@ -64,7 +64,7 @@ def hienthidulieu(df, title):
     df_sorted = df.sort_values('Tổng đã nhập', ascending=False)
     
     # Chia layout 2 cột bằng nhau (1:1)
-    col1, col2 = st.columns([1.5, 1])
+    col1, col2 = st.columns([1.2, 1])
 
     with col1:
         # Chuẩn bị dữ liệu bảng
@@ -76,8 +76,8 @@ def hienthidulieu(df, title):
         # Hiển thị bảng dạng dataframe để có thể tùy chỉnh chiều cao (height)
         # Giúp cột 1 cân đối hơn với biểu đồ ở cột 2
         st.dataframe(
-            df_table[['Tỉnh', 'Số cần nhập', 'Số mới nhập', 'Tổng đã nhập', 'Tỷ lệ hoàn thành']].style.format({
-                'Tỷ lệ hoàn thành': '{:.1f}%'
+            df_table[['Tỉnh', 'Số cần nhập', 'Số mới nhập', 'Tổng đã nhập', 'Tỷ lệ']].style.format({
+                'Tỷ lệ': '{:.1f}%'
             }),
             use_container_width=True,
             height=500 # Điều chỉnh số này để khớp với chiều cao biểu đồ
