@@ -64,7 +64,7 @@ def hienthidulieu(df, title):
     df_sorted = df.sort_values('Tổng đã nhập', ascending=False)
     
     # Chia layout 2 cột bằng nhau (1:1)
-    col1, col2 = st.columns([1, 1])
+    col1, col2 = st.columns([2, 1])
 
     with col1:
         # Chuẩn bị dữ liệu bảng
