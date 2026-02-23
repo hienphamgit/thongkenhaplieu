@@ -75,7 +75,7 @@ def render_html_table(df_table):
         rows_html += f'<tr style="background:{bg};">{row_cells}</tr>'
 
     html = f"""
-    <div style="overflow-y:auto; max-height:550px; border:1px solid #ddd; border-radius:6px;">
+    <div style="overflow-y:auto; max-height:600px; border:1px solid #ddd; border-radius:6px;">
       <table style="width:100%; border-collapse:collapse; font-size:13px; font-family:sans-serif;">
         <thead style="position:sticky;top:0;z-index:1;">
           <tr>{header_cells}</tr>
