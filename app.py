@@ -80,7 +80,7 @@ def hienthidulieu(df, title):
                 'Tỷ lệ': '{:.1f}%'
             }),
             use_container_width=True,
-            height=500 # Điều chỉnh số này để khớp với chiều cao biểu đồ
+            height=550 # Điều chỉnh số này để khớp với chiều cao biểu đồ
         )
 
     with col2:
