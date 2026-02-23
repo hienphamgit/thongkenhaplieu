@@ -75,15 +75,12 @@ def hienthidulieu(df, title):
         
         # Hiển thị bảng dạng dataframe để có thể tùy chỉnh chiều cao (height)
         # Giúp cột 1 cân đối hơn với biểu đồ ở cột 2
-        styled_df = df_table[['Tỉnh', 'Số cần nhập', 'Số mới nhập', 'Tổng đã nhập', 'Tỷ lệ']].style \
-        .format({'Tỷ lệ': '{:.1f}%'}) \
-        .map(lambda x: 'color: black;') # Ép tất cả các ô sang màu đen
-
-        # Hiển thị bảng
         st.dataframe(
-            styled_df,
+            df_table[['Tỉnh', 'Số cần nhập', 'Số mới nhập', 'Tổng đã nhập', 'Tỷ lệ']].style.format({
+                'Tỷ lệ': '{:.1f}%'
+            }),
             use_container_width=True,
-            height=500 
+            height=500 # Điều chỉnh số này để khớp với chiều cao biểu đồ
         )
 
     with col2:
