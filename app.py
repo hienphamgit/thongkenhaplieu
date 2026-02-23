@@ -3,37 +3,6 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
 
-def apply_custom_styles():
-    st.markdown("""
-        <style>
-        /* Header của bảng dataframe */
-        [data-testid="stDataFrame"] thead tr th {
-            background-color: #1a3a5c !important;
-            color: #ffffff !important;
-            font-weight: bold !important;
-            font-size: 13px !important;
-            text-align: center !important;
-            border-bottom: 2px solid #F18F01 !important;
-            padding: 8px 6px !important;
-        }
-
-        /* Hover row */
-        [data-testid="stDataFrame"] tbody tr:hover td {
-            background-color: #e8f0fe !important;
-        }
-
-        /* Alternating row colors */
-        [data-testid="stDataFrame"] tbody tr:nth-child(even) td {
-            background-color: #f5f8fc !important;
-        }
-
-        /* Index column header */
-        [data-testid="stDataFrame"] thead tr th:first-child {
-            background-color: #0f2540 !important;
-            color: #F18F01 !important;
-        }
-        </style>
-    """, unsafe_allow_html=True)
 
 def plot_chart(df_plot, title):
     fig, ax = plt.subplots(figsize=(10, 9)) 
@@ -84,45 +53,38 @@ def format_data(df):
     df['Tỷ lệ'] = df.apply(lambda row: row['Tổng đã nhập'] / row['Số cần nhập'] * 100 if row['Số cần nhập'] > 0 else 0, axis=1)
     return df
 
-def style_dataframe(df_table):
-    """Áp dụng style cho bảng: header nền xanh đậm, chữ trắng; dòng xen kẽ màu nhạt."""
-    return (
-        df_table[['Tỉnh', 'Số cần nhập', 'Số mới nhập', 'Tổng đã nhập', 'Tỷ lệ']]
-        .style
-        .format({'Tỷ lệ': '{:.1f}%'})
-        .set_table_styles([
-            # Header chính
-            {
-                'selector': 'thead tr th',
-                'props': [
-                    ('background-color', '#1a3a5c'),
-                    ('color', '#ffffff'),
-                    ('font-weight', 'bold'),
-                    ('font-size', '13px'),
-                    ('text-align', 'center'),
-                    ('border-bottom', '2px solid #F18F01'),
-                    ('padding', '8px 6px'),
-                ]
-            },
-            # Dòng chẵn (zebra striping)
-            {
-                'selector': 'tbody tr:nth-child(even)',
-                'props': [('background-color', '#f0f5fb')]
-            },
-            # Hover
-            {
-                'selector': 'tbody tr:hover',
-                'props': [('background-color', '#d6e4f7')]
-            },
-        ])
-        .set_properties(**{
-            'font-size': '12px',
-            'text-align': 'center',
-        })
-        .set_properties(subset=['Tỉnh'], **{
-            'text-align': 'left',
-        })
-    )
+def render_html_table(df_table):
+    """Tạo bảng HTML với header nền xanh đậm, chữ trắng, zebra striping."""
+    cols = ['Tỉnh', 'Số cần nhập', 'Số mới nhập', 'Tổng đã nhập', 'Tỷ lệ']
+
+    header_cells = '<th style="background:#1a3a5c;color:#fff;font-weight:bold;padding:8px 10px;text-align:center;border-bottom:2px solid #F18F01;white-space:nowrap;">STT</th>'
+    for col in cols:
+        align = 'left' if col == 'Tỉnh' else 'center'
+        header_cells += f'<th style="background:#1a3a5c;color:#fff;font-weight:bold;padding:8px 10px;text-align:{align};border-bottom:2px solid #F18F01;white-space:nowrap;">{col}</th>'
+
+    rows_html = ''
+    for i, (_, row) in enumerate(df_table.iterrows()):
+        bg = '#f0f5fb' if i % 2 == 0 else '#ffffff'
+        stt = i + 1
+        ty_le = f"{row['Tỷ lệ']:.1f}%"
+        row_cells = f'<td style="padding:6px 10px;text-align:center;color:#333;">{stt}</td>'
+        for col in cols:
+            align = 'left' if col == 'Tỉnh' else 'center'
+            val = ty_le if col == 'Tỷ lệ' else row[col]
+            row_cells += f'<td style="padding:6px 10px;text-align:{align};color:#333;">{val}</td>'
+        rows_html += f'<tr style="background:{bg};">{row_cells}</tr>'
+
+    html = f"""
+    <div style="overflow-y:auto; max-height:550px; border:1px solid #ddd; border-radius:6px;">
+      <table style="width:100%; border-collapse:collapse; font-size:13px; font-family:sans-serif;">
+        <thead style="position:sticky;top:0;z-index:1;">
+          <tr>{header_cells}</tr>
+        </thead>
+        <tbody>{rows_html}</tbody>
+      </table>
+    </div>
+    """
+    st.markdown(html, unsafe_allow_html=True)
 
 def hienthidulieu(df, title):
     df = format_data(df)
@@ -133,14 +95,7 @@ def hienthidulieu(df, title):
     with col1:
         df_table = df_sorted.copy()
         df_table = df_table.sort_values('Tổng đã nhập', ascending=False).reset_index(drop=True)
-        df_table.index = df_table.index + 1
-        df_table.index.name = 'STT'
-        
-        st.dataframe(
-            style_dataframe(df_table),
-            use_container_width=True,
-            height=550
-        )
+        render_html_table(df_table)
 
     with col2:
         df_plot = df_sorted.sort_values('Tổng đã nhập', ascending=False).reset_index(drop=True)
@@ -151,7 +106,6 @@ def hienthidulieu(df, title):
 
 def main():
     st.set_page_config(layout="wide")
-    apply_custom_styles()
 
     data_tintoipham = {
         'Tỉnh': ['An Giang', 'Bắc Ninh', 'Cà Mau', 'Cao Bằng', 'Cần Thơ', 'Đà Nẵng', 
