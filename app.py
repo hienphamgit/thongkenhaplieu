@@ -82,7 +82,7 @@ def format_data(df):
     df['Còn lại cần nhập'] =  df['Số cần nhập'] - df['Tổng đã nhập']
     df['Còn lại cần nhập'] = df['Còn lại cần nhập'].apply(lambda x: 0 if x < 0 else x)
     df['Tỷ lệ'] = df.apply(lambda row: row['Tổng đã nhập'] / row['Số cần nhập'] * 100 if row['Số cần nhập'] > 0 else 0, axis=1)
-    df = df.sort_values('Tổng đã nhập', ascending=False).reset_index(drop=True)
+    df = df.sort_values(['Tổng đã nhập', 'Còn lại cần nhập'], ascending=[False, False]).reset_index(drop=True)
     return df
 
 def render_html_table(df_table):
@@ -124,7 +124,7 @@ def hienthidulieu(df, title):
     elif 'Khu vực' in df.columns:
         df = df.rename(columns={'Khu vực': 'Tỉnh'})
     df = format_data(df)
-    df_sorted = df.sort_values('Tổng đã nhập', ascending=False)
+    df_sorted = df.sort_values(['Tổng đã nhập', 'Còn lại cần nhập'], ascending=[False, False])
     
     col1, col2 = st.columns([1, 1.5])
 
@@ -134,7 +134,7 @@ def hienthidulieu(df, title):
         render_html_table(df_table)
 
     with col2:
-        df_plot = df_sorted.sort_values('Tổng đã nhập', ascending=False).reset_index(drop=True)
+        df_plot = df_sorted.sort_values(['Tổng đã nhập', 'Còn lại cần nhập'], ascending=[False, False]).reset_index(drop=True)
         plot_chart(df_plot, title)
 
 
