@@ -32,7 +32,7 @@ df_kv_xetxu.columns = ['Khu vực', 'Số cần nhập', 'Số mới nhập', 'T
 
 def plot_chart(df_plot, title):
     # Tự động tính chiều cao linh hoạt (0.22 inch cho mỗi hàng, tối thiểu 5 inch)
-    chart_height = max(5, int(len(df_plot) * 0.22))
+    chart_height = max(5, int(len(df_plot) * 0.3))
     fig, ax = plt.subplots(figsize=(10, chart_height)) 
     y_pos = np.arange(len(df_plot))
 
@@ -82,7 +82,7 @@ def format_data(df):
     df['Còn lại cần nhập'] =  df['Số cần nhập'] - df['Tổng đã nhập']
     df['Còn lại cần nhập'] = df['Còn lại cần nhập'].apply(lambda x: 0 if x < 0 else x)
     df['Tỷ lệ'] = df.apply(lambda row: row['Tổng đã nhập'] / row['Số cần nhập'] * 100 if row['Số cần nhập'] > 0 else 0, axis=1)
-    df = df.sort_values(['Tổng đã nhập', 'Còn lại cần nhập'], ascending=[False, False]).reset_index(drop=True)
+    df = df.sort_values(['Số mới nhập', 'Tổng đã nhập', 'Còn lại cần nhập'], ascending=[False, False, False]).reset_index(drop=True)
     return df
 
 def render_html_table(df_table):
@@ -107,7 +107,7 @@ def render_html_table(df_table):
         rows_html += f'<tr style="background:{bg};">{row_cells}</tr>'
 
     html = f"""
-    <div style="overflow-y:auto; max-height:700px; border:1px solid #ddd; border-radius:6px;">
+    <div style="overflow-y:auto; max-height:750px; border:1px solid #ddd; border-radius:6px;">
       <table style="width:100%; border-collapse:collapse; font-size:13px; font-family:sans-serif;">
         <thead style="position:sticky;top:0;z-index:1;">
           <tr>{header_cells}</tr>
@@ -124,17 +124,17 @@ def hienthidulieu(df, title):
     elif 'Khu vực' in df.columns:
         df = df.rename(columns={'Khu vực': 'Tỉnh'})
     df = format_data(df)
-    df_sorted = df.sort_values(['Tổng đã nhập', 'Còn lại cần nhập'], ascending=[False, False])
+    df_sorted = df.sort_values(['Số mới nhập', 'Tổng đã nhập', 'Còn lại cần nhập'], ascending=[False, False, False])
     
     col1, col2 = st.columns([1, 1.5])
 
     with col1:
         df_table = df_sorted.copy()
-        df_table = df_table.sort_values('Tổng đã nhập', ascending=False).reset_index(drop=True)
+        df_table = df_table.sort_values(['Số mới nhập', 'Tổng đã nhập', 'Còn lại cần nhập'], ascending=[False, False, False]).reset_index(drop=True)
         render_html_table(df_table)
 
     with col2:
-        df_plot = df_sorted.sort_values(['Tổng đã nhập', 'Còn lại cần nhập'], ascending=[False, False]).reset_index(drop=True)
+        df_plot = df_sorted.sort_values(['Số mới nhập', 'Tổng đã nhập', 'Còn lại cần nhập'], ascending=[False, False, False]).reset_index(drop=True)
         plot_chart(df_plot, title)
 
 
