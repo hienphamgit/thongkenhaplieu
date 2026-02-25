@@ -48,7 +48,9 @@ def plot_chart(df_plot, title):
             color='#DC143C', label='Còn lại cần nhập', edgecolor='white', linewidth=0.5)
 
     ax.set_yticks(y_pos)
-    ax.set_yticklabels(df_plot['Tỉnh'], fontsize=9)
+    # Thêm số thứ tự vào trước tên Tỉnh/Khu vực
+    stt_labels = [f"{i+1}. {name}" for i, name in enumerate(df_plot['Tỉnh'])]
+    ax.set_yticklabels(stt_labels, fontsize=9)
     ax.invert_yaxis() 
     # Nới lỏng giới hạn trục Y một chút để không bị sát lề quá (mỗi đầu cách ra khoảng 1 đơn vị)
     ax.set_ylim(len(df_plot), -1) 
@@ -78,9 +80,16 @@ def plot_chart(df_plot, title):
     return fig
 
 def format_data(df):
+    # Ép kiểu số toàn bộ để tránh lỗi str - int (TypeError)
+    calc_cols = ['Số cần nhập', 'Số mới nhập', 'Tổng đã nhập']
+    for col in calc_cols:
+        if col in df.columns:
+            df[col] = pd.to_numeric(df[col], errors='coerce').fillna(0)
+    
     df['Đã nhập (cũ)'] = df['Tổng đã nhập'] - df['Số mới nhập']
     df['Còn lại cần nhập'] =  df['Số cần nhập'] - df['Tổng đã nhập']
     df['Còn lại cần nhập'] = df['Còn lại cần nhập'].apply(lambda x: 0 if x < 0 else x)
+    # Đảm bảo mẫu số > 0 để tránh lỗi chia cho 0
     df['Tỷ lệ'] = df.apply(lambda row: row['Tổng đã nhập'] / row['Số cần nhập'] * 100 if row['Số cần nhập'] > 0 else 0, axis=1)
     df = df.sort_values(['Số mới nhập', 'Tổng đã nhập', 'Còn lại cần nhập'], ascending=[False, False, False]).reset_index(drop=True)
     return df
@@ -126,14 +135,16 @@ def hienthidulieu(df, title):
     df = format_data(df)
     df_sorted = df.sort_values(['Số mới nhập', 'Tổng đã nhập', 'Còn lại cần nhập'], ascending=[False, False, False])
     
-    col1, col2 = st.columns([1, 1.5])
+    # Tạo khung thu gọn và căn giữa (Sử dụng tỷ lệ [1, 4, 1] để biểu đồ hẹp lại)
+    left_spacer, center_col, right_spacer = st.columns([1, 4, 1])
+    
+    #with col1:
+    #    df_table = df_sorted.copy()
+    #    df_table = df_table.sort_values(['Số mới nhập', 'Tổng đã nhập', 'Còn lại cần nhập'], ascending=[False, False, False]).reset_index(drop=True)
+    #    render_html_table(df_table)
 
-    with col1:
-        df_table = df_sorted.copy()
-        df_table = df_table.sort_values(['Số mới nhập', 'Tổng đã nhập', 'Còn lại cần nhập'], ascending=[False, False, False]).reset_index(drop=True)
-        render_html_table(df_table)
-
-    with col2:
+    #with col2:
+    with center_col:
         df_plot = df_sorted.sort_values(['Số mới nhập', 'Tổng đã nhập', 'Còn lại cần nhập'], ascending=[False, False, False]).reset_index(drop=True)
         plot_chart(df_plot, title)
 
