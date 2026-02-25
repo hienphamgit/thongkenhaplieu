@@ -36,12 +36,12 @@ def plot_chart(df_plot, title):
     fig, ax = plt.subplots(figsize=(10, chart_height)) 
     y_pos = np.arange(len(df_plot))
 
-    ax.barh(y_pos, df_plot['Đã nhập (cũ)'], 
-            color='#06A77D', label='Đã nhập (cũ)', edgecolor='white', linewidth=0.5)
-
     ax.barh(y_pos, df_plot['Số mới nhập'], 
-            left=df_plot['Đã nhập (cũ)'],
             color='#F18F01', label='Số mới nhập', edgecolor='white', linewidth=0.5)
+
+    ax.barh(y_pos, df_plot['Đã nhập (cũ)'], 
+            left=df_plot['Số mới nhập'],
+            color='#06A77D', label='Đã nhập (cũ)', edgecolor='white', linewidth=0.5)
 
     ax.barh(y_pos, df_plot['Còn lại cần nhập'], 
             left=df_plot['Tổng đã nhập'],
@@ -87,7 +87,7 @@ def format_data(df):
 
 def render_html_table(df_table):
     """Tạo bảng HTML với header nền xanh đậm, chữ trắng, zebra striping."""
-    cols = ['Tỉnh', 'Số cần nhập', 'Số mới nhập', 'Tổng đã nhập', 'Tỷ lệ']
+    cols = ['Tỉnh', 'Số mới nhập', 'Số cần nhập', 'Tổng đã nhập', 'Tỷ lệ']
 
     header_cells = '<th style="background:#1a3a5c;color:#fff;font-weight:bold;padding:8px 10px;text-align:center;border-bottom:2px solid #F18F01;white-space:nowrap;">STT</th>'
     for col in cols:
